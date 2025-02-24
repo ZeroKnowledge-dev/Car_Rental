@@ -1,0 +1,16 @@
+:root {
+    --primary-color: #A0E4D0;
+    /* Soft green */
+    --primary-hover: #86c6a1;
+    /* Lighter green */
+    --secondary-color: #6c8f7f;
+    /* Muted teal */
+    --text-color: #2d3c34;
+    /* Dark greenish gray */
+    --bg-color: #f1f7f5;
+    /* Light beige background */
+    --dark-bg-color: #1f2a27;
+    /* Dark mode gray background */
+    --dark-text-color: #e0f7f2;
+    /* Soft light text color */
+}
