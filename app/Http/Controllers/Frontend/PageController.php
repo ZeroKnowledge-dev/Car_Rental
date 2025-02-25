@@ -13,8 +13,6 @@ class PageController extends Controller {
 
 		return Inertia::render('Welcome', [
 			'featureCars' => $featuredCars,
-			'canLogin'    => Route::has('login'),
-			'canRegister' => Route::has('register'),
 		]);
 	}
 
@@ -27,6 +25,13 @@ class PageController extends Controller {
 
 	public function contact() {
 		return Inertia::render('Contact', [
+			'canLogin'    => Route::has('login'),
+			'canRegister' => Route::has('register'),
+		]);
+	}
+
+	public function terms() {
+		return Inertia::render('../Layouts/MainLayout', [
 			'canLogin'    => Route::has('login'),
 			'canRegister' => Route::has('register'),
 		]);

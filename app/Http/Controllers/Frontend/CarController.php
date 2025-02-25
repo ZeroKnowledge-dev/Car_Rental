@@ -45,23 +45,27 @@ class CarController extends Controller {
 	 * Check car availability for specific dates.
 	 */
 	public function checkAvailability(Request $request, Car $car) {
-		$request->validate([
-			'start_date' => 'required|date|after_or_equal:today',
-			'end_date'   => 'required|date|after:start_date',
-		]);
+		try {
+			$request->validate([
+				'start_date' => 'required|date|after_or_equal:today',
+				'end_date'   => 'required|date|after:start_date',
+			]);
 
-		$isAvailable = $car->availability && !$car->rentals()
-			->where(function ($query) use ($request) {
-				$query->whereBetween('start_date', [$request->start_date, $request->end_date])
-					->orWhereBetween('end_date', [$request->start_date, $request->end_date])
-					->orWhere(function ($q) use ($request) {
-						$q->where('start_date', '<=', $request->start_date)
-							->where('end_date', '>=', $request->end_date);
-					});
-			})
-			->where('status', 'ongoing')
-			->exists();
+			$isAvailable = $car->availability && !$car->rentals()
+				->where(function ($query) use ($request) {
+					$query->whereBetween('start_date', [$request->start_date, $request->end_date])
+						->orWhereBetween('end_date', [$request->start_date, $request->end_date])
+						->orWhere(function ($q) use ($request) {
+							$q->where('start_date', '<=', $request->start_date)
+								->where('end_date', '>=', $request->end_date);
+						});
+				})
+				->where('status', 'ongoing')
+				->exists();
 
-		return response()->json(['available' => $isAvailable]);
+			return response()->json(['available' => $isAvailable]);
+		} catch (\Exception $e) {
+			return response()->json(['error' => 'Failed to check availability', 'message' => $e->getMessage()], 500);
+		}
 	}
 }

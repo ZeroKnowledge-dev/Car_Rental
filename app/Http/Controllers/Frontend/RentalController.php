@@ -58,9 +58,6 @@ class RentalController extends Controller {
 			'total_cost' => $totalCost,
 		]);
 
-		// Update car availability
-		$car->update(['availability' => false]);
-
 		return redirect()->route('dashboard')
 			->with('success', 'Car rental booked successfully!');
 	}
@@ -82,9 +79,8 @@ class RentalController extends Controller {
 		}
 
 		$rental->update(['status' => 'canceled']);
-		$rental->car->update(['availability' => true]);
 
-		return redirect()->route('dashboard')
+		return redirect()->route('customerDashboard')
 			->with('success', 'Rental canceled successfully.');
 	}
 }

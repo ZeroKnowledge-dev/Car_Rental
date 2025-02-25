@@ -1,7 +1,9 @@
 import "../css/app.css";
 import "./bootstrap";
 import "@/Asset/style.css";
+import "vue3-easy-data-table/dist/style.css";
 
+import Vue3EasyDataTable from "vue3-easy-data-table";
 import { createInertiaApp } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { createApp, h } from "vue";
@@ -19,6 +21,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
+            .component("EasyDataTable", Vue3EasyDataTable)
             .use(ZiggyVue)
             .mount(el);
     },

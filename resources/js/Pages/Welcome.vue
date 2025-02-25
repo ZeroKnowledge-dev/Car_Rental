@@ -1,177 +1,113 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
+import MainLayout from '@/Layouts/MainLayout.vue';
+import CarCard from '@/Components/CarCard.vue';
 
 defineProps({
-    canLogin: {
-        type: Boolean,
-    },
-    canRegister: {
-        type: Boolean,
-    },
-    featureCars: {
-        type: Object,
-    }
+    featureCars: Array,
+    canLogin: Boolean,
+    canRegister: Boolean,
 });
 </script>
 
 <template>
 
     <Head title="Welcome" />
-    <header class="bg-[#66abb8] dark:bg-gray-900">
-        <nav v-if="canLogin" class=" py-2 px-20">
-            <template v-if="$page.props.auth.user">
-                <div class="flex justify-between items-center px-4 py-2">
-                    <!-- Left side (Dashboard link) -->
-                    <div class="flex items-center">
-                        <Link :href="route('dashboard')"
-                            class="text-black dark:text-white px-3 py-2 rounded-md text-lg font-semibold ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white">
-                        Dashboard
-                        </Link>
-                    </div>
 
-                    <!-- Right side (Home, Cars, About, Contact links) -->
-                    <div class="flex space-x-4">
-                        <Link :href="route('welcome')"
-                            class="text-black dark:text-white px-3 py-2 rounded-md transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white">
-                        Home
-                        </Link>
+    <MainLayout>
+        <!-- Hero Section -->
+        <div class="bg-gradient-to-r from-[#EAF9E7] to-[#C0E6BA] py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 class="text-4xl font-extrabold text-[#013237] sm:text-5xl md:text-6xl">
+                        Easy Car Rentals
+                    </h1>
+                    <p class="mt-3 max-w-md mx-auto text-xl text-[#4CA771] sm:text-2xl md:mt-5 md:max-w-3xl">
+                        Rent your dream car at affordable prices
+                    </p>
+                    <div class="mt-10 flex justify-center">
                         <Link :href="route('cars')"
-                            class="text-black dark:text-white px-3 py-2 rounded-md transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white">
-                        Cars
+                            class="inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-[#4CA771] hover:bg-[#013237]">
+                        Browse Cars
                         </Link>
-                        <Link :href="route('about')"
-                            class="text-black dark:text-white px-3 py-2 rounded-md transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white">
-                        About
-                        </Link>
-                        <Link :href="route('contact')"
-                            class="text-black dark:text-white px-3 py-2 rounded-md transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white">
-                        Contact
-                        </Link>
-                        <Link :href="route('logout')" method="post"
-                            class="text-black dark:text-white px-3 py-2 rounded-md transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white">
-                        Log Out
-                        </Link>
-                    </div>
-                </div>
-            </template>
-
-            <template v-else>
-                <div class="flex justify-end items-center px-4 py-2">
-                    <!-- Login/Register links -->
-                    <div class="flex space-x-4">
-                        <Link :href="route('welcome')"
-                            class="text-black dark:text-white px-3 py-2 rounded-md transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white">
-                        Home
-                        </Link>
-                        <Link :href="route('cars')"
-                            class="text-black dark:text-white px-3 py-2 rounded-md transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white">
-                        Cars
-                        </Link>
-                        <Link :href="route('about')"
-                            class="text-black dark:text-white px-3 py-2 rounded-md transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white">
-                        About
-                        </Link>
-                        <Link :href="route('contact')"
-                            class="text-black dark:text-white px-3 py-2 rounded-md transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white">
-                        Contact
-                        </Link>
-                        <Link :href="route('login')"
-                            class="text-black dark:text-white px-3 py-2 rounded-md transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white">
-                        Log in
-                        </Link>
-
-                        <Link v-if="canRegister" :href="route('register')"
-                            class="text-black dark:text-white px-3 py-2 rounded-md transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:hover:text-white/80 dark:focus-visible:ring-white">
-                        Register
-                        </Link>
-                    </div>
-                </div>
-            </template>
-        </nav>
-    </header>
-
-
-    <main class="mt-6">
-        <div>
-            <!-- Hero Section -->
-            <div class="relative bg-white overflow-hidden">
-                <div class="max-w-7xl mx-auto">
-                    <div class="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
-                        <main class="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 lg:mt-16 lg:px-8 xl:mt-20">
-                            <div class="sm:text-center lg:text-left">
-                                <h1
-                                    class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-                                    <span class="block">Rent Your Dream Car</span>
-                                    <span class="block text-indigo-600">Today</span>
-                                </h1>
-                                <p
-                                    class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                                    Choose from our wide selection of cars. From luxury to economy, we have the perfect
-                                    car for your needs.
-                                </p>
-                                <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
-                                    <div class="rounded-md shadow">
-                                        <Link href="/cars"
-                                            class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10">
-                                        Browse Cars
-                                        </Link>
-                                    </div>
-                                    <div class="mt-3 sm:mt-0 sm:ml-3">
-                                        <Link href="/about"
-                                            class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 md:py-4 md:text-lg md:px-10">
-                                        Learn More
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                        </main>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Featured Cars Section -->
-            <div class="bg-gray-100 py-12">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="lg:text-center">
-                        <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Featured Cars</h2>
-                        <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                            Our Latest Available Cars
-                        </p>
-                    </div>
-
-                    <div class="mt-10">
-                        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                            <div v-for="car in featureCars" :key="car.id"
-                                class="bg-white overflow-hidden shadow rounded-lg">
-                                <div class="relative pb-48">
-                                    <img :src="`storage/${car.image}`" :alt="car.name"
-                                        class="absolute h-full w-full object-cover" />
-                                </div>
-                                <div class="px-4 py-4">
-                                    <h3 class="text-lg font-medium text-gray-900">{{ car.name }}</h3>
-                                    <p class="mt-1 text-sm text-gray-500">{{ car.brand }} {{ car.model }}</p>
-                                    <p class="mt-1 text-sm text-gray-500">{{ car.year }} · {{ car.car_type }}</p>
-                                    <div class="mt-4 flex items-center justify-between">
-                                        <span class="text-lg font-bold text-indigo-600">${{
-                                            car.daily_rent_price }}/day</span>
-                                        <Link :href="`/cars/${car.id}`"
-                                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                        View Details
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-10 text-center">
-                            <Link href="/cars"
-                                class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                            View All Cars
-                            </Link>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+
+        <!-- Featured Cars -->
+        <div class="py-12 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-[#013237] sm:text-4xl">
+                        Featured Cars
+                    </h2>
+                    <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+                        Check out our top picks for your next journey
+                    </p>
+                </div>
+
+                <div class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    <CarCard v-for="car in featureCars" :key="car.id" :car="car" />
+                </div>
+
+                <div class="mt-10 text-center">
+                    <Link :href="route('cars')"
+                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-[#4CA771] bg-white hover:bg-gray-50 border-[#4CA771]">
+                    View All Cars
+                    </Link>
+                </div>
+            </div>
+        </div>
+
+        <!-- Why Choose Us -->
+        <div class="py-12 bg-[#EAF9E7]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-[#013237] sm:text-4xl">
+                        Why Choose Us
+                    </h2>
+                </div>
+
+                <div class="mt-10 grid gap-8 md:grid-cols-3">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-[#4CA771] text-2xl mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-[#013237]">Quick & Easy Booking</h3>
+                        <p class="mt-2 text-gray-600">Book your car in minutes with our simple booking process.</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-[#4CA771] text-2xl mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-[#013237]">Best Price Guarantee</h3>
+                        <p class="mt-2 text-gray-600">We offer competitive pricing without compromising on quality.</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-[#4CA771] text-2xl mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-[#013237]">Fully Insured Cars</h3>
+                        <p class="mt-2 text-gray-600">All our vehicles come with comprehensive insurance for your peace
+                            of mind.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </MainLayout>
 </template>
