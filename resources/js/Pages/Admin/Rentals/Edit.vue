@@ -1,6 +1,6 @@
 <template>
 
-    <Head :title="'Edit Rental - ' + rental.id" />
+    <Head :title="'Edit Rental'" />
 
     <AdminLayout>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -46,7 +46,7 @@
                                         </div>
                                         <div class="ml-auto">
                                             <p class="text-sm font-medium text-[#4CA771]">${{ car.daily_rent_price
-                                                }}/day</p>
+                                            }}/day</p>
                                         </div>
                                     </div>
                                 </div>
@@ -128,6 +128,10 @@ const props = defineProps({
     user: Object,
     car: Object
 });
+
+console.log(props.rental);
+console.log(props.user);
+console.log(props.car);
 
 const form = useForm({
     start_date: props.rental.start_date,
