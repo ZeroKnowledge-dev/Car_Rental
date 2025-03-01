@@ -117,7 +117,7 @@ const today = new Date().toISOString().split('T')[0];
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>{{ car.seats }} Seats</span>
+                                        <span>4 Seats</span>
                                     </div>
                                     <div class="flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#4CA771] mr-2"
@@ -125,7 +125,7 @@ const today = new Date().toISOString().split('T')[0];
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>{{ car.transmission }}</span>
+                                        <span>Automatic</span>
                                     </div>
                                     <div class="flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#4CA771] mr-2"
@@ -133,7 +133,7 @@ const today = new Date().toISOString().split('T')[0];
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>{{ car.fuel_type }}</span>
+                                        <span>Octane</span>
                                     </div>
                                     <div class="flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#4CA771] mr-2"
