@@ -114,6 +114,7 @@ const form = useForm({
     car_id: '',
     start_date: '',
     end_date: '',
+    total_cost: '',
 });
 
 const today = new Date().toISOString().split('T')[0];
@@ -132,10 +133,11 @@ const rentalDays = computed(() => {
     const start = new Date(form.start_date);
     const end = new Date(form.end_date);
     const diffTime = Math.abs(end - start);
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24) + 1);
 });
 
 const totalCost = computed(() => {
+    form.total_cost = selectedCarRate.value * rentalDays.value;
     return selectedCarRate.value * rentalDays.value;
 });
 

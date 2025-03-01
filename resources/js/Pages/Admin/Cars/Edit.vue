@@ -44,7 +44,7 @@
 
                                     <div>
                                         <InputLabel for="year" value="Year" class="text-[#013237]" />
-                                        <TextInput id="year" type="number" v-model="form.year"
+                                        <TextInput id="year" type="text" v-model="form.year"
                                             class="mt-1 block w-full border-gray-300 focus:border-[#4CA771] focus:ring-[#4CA771]"
                                             required />
                                         <InputError :message="form.errors.year" class="mt-2" />
@@ -76,15 +76,7 @@
                                 </div>
 
                                 <div>
-                                    <InputLabel for="description" value="Description" class="text-[#013237]" />
-                                    <textarea id="description" v-model="form.description" rows="4"
-                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-[#4CA771] focus:ring focus:ring-[#4CA771] focus:ring-opacity-50"
-                                        required></textarea>
-                                    <InputError :message="form.errors.description" class="mt-2" />
-                                </div>
-
-                                <div>
-                                    <InputLabel for="image" value="Car Image (Optional)" class="text-[#013237]" />
+                                    <InputLabel for="image" value="Car Image" class="text-[#013237]" />
                                     <input type="file" id="image" @input="form.image = $event.target.files[0]"
                                         class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#4CA771] file:text-white hover:file:bg-[#013237]"
                                         accept="image/*" />
@@ -135,10 +127,9 @@ const form = useForm({
     name: props.car.name,
     brand: props.car.brand,
     model: props.car.model,
-    year: props.car.year,
+    year: props.car.year.toString(),
     daily_rent_price: props.car.daily_rent_price,
     car_type: props.car.car_type,
-    description: props.car.description,
     availability: props.car.availability,
     image: null,
     _method: 'PUT',

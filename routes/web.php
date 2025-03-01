@@ -18,7 +18,7 @@ use Inertia\Inertia;
 Route::get('/admin/dashboard', function () {
 	$rentals   = Rental::all(); // Get all rentals
 	$cars      = Car::all(); // Get all cars
-	$users     = User::all(); // Get all users
+	$users     = User::where('role', 'customer')->get(); // Get all customers
 	$totalCars = Car::count();
 
 	return Inertia::render('Admin/Dashboard', [

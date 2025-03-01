@@ -23,7 +23,7 @@
                                     <div class="mt-1 flex items-center">
                                         <div
                                             class="h-10 w-10 rounded-full bg-[#4CA771] flex items-center justify-center text-white font-semibold">
-                                            {{ user.name }}
+                                            {{ user.name.charAt(0) }}
                                         </div>
                                         <div class="ml-3">
                                             <p class="text-sm font-medium text-gray-900">{{ user.name }}</p>
@@ -46,7 +46,7 @@
                                         </div>
                                         <div class="ml-auto">
                                             <p class="text-sm font-medium text-[#4CA771]">${{ car.daily_rent_price
-                                            }}/day</p>
+                                                }}/day</p>
                                         </div>
                                     </div>
                                 </div>
@@ -129,13 +129,15 @@ const props = defineProps({
     car: Object
 });
 
-console.log(props.rental);
-console.log(props.user);
-console.log(props.car);
+// Helper function to format date to 'yyyy-MM-dd'
+const formatDate = (date) => {
+    const d = new Date(date);
+    return d.toISOString().split('T')[0]; // 'yyyy-MM-dd' format
+};
 
 const form = useForm({
-    start_date: props.rental.start_date,
-    end_date: props.rental.end_date,
+    start_date: formatDate(props.rental.start_date),
+    end_date: formatDate(props.rental.end_date),
     status: props.rental.status,
     total_cost: props.rental.total_cost,
     user_id: props.user.id,
@@ -147,7 +149,8 @@ const form = useForm({
 const minStartDate = computed(() => {
     const originalStart = new Date(props.rental.start_date);
     const today = new Date();
-    return originalStart < today ? props.rental.start_date : today.toISOString().split('T')[0];
+    const formattedToday = today.toISOString().split('T')[0]; // Format today's date as 'yyyy-MM-dd'
+    return originalStart < today ? formatDate(props.rental.start_date) : formattedToday;
 });
 
 const rentalDays = computed(() => {
@@ -172,6 +175,8 @@ watch([() => form.start_date, () => form.end_date], ([newStart, newEnd]) => {
 });
 
 const updateRental = () => {
+    form.start_date = formatDate(form.start_date);
+    form.end_date = formatDate(form.end_date);
     form.post(route('admin.rentals.update', props.rental.id), {
         preserveScroll: true,
     });

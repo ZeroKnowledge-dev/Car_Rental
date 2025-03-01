@@ -15,7 +15,7 @@ class CustomerController extends Controller {
 	 * Display a listing of the resource.
 	 */
 	public function index() {
-		$customers = User::where('role', 'customer')->has('rentals')->with('rentals')->get();
+		$customers = User::where('role', 'customer')->with('rentals')->get();
 
 		return Inertia::render('Admin/Customer/Index', [
 			'customers' => $customers,
@@ -34,9 +34,10 @@ class CustomerController extends Controller {
 	 */
 	public function store(Request $request) {
 		$validation = $request->validate([
-			'name'     => 'required|string|max:255',
-			'email'    => 'required|string|email|max:255|unique:users',
-			'password' => 'required|string|min:8|confirmed',
+			'name'                  => 'required|string|max:255',
+			'email'                 => 'required|string|email|max:255|unique:users',
+			'password'              => 'required|string|min:8|confirmed',
+			'password_confirmation' => 'required|string|min:8',
 		]);
 
 		$validation['password'] = Hash::make($validation['password']);

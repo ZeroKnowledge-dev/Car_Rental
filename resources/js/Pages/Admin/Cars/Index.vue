@@ -41,8 +41,8 @@
 
             <!-- Cars Grid -->
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                <div v-for="car in props.cars" :key="car.id"
-                    class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200">
+                <div v-for="car in filteredCars" :key="car.id" class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md
+                    transition-shadow duration-200">
                     <div class="aspect-w-16 aspect-h-9">
                         <img :src="`/storage/${car.image}`" :alt="car.name" class="object-cover w-full h-48" />
                     </div>
@@ -51,6 +51,7 @@
                             <div>
                                 <h3 class="text-lg font-semibold text-[#013237]">{{ car.name }}</h3>
                                 <p class="text-sm text-gray-600">{{ car.brand }} {{ car.model }} {{ car.year }}</p>
+                                <p class="text-sm text-gray-600">{{ car.car_type }}</p>
                             </div>
                             <span :class="[
                                 car.availability ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800',
@@ -115,72 +116,41 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import Modal from '@/Components/Modal.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 
 const props = defineProps({
     cars: {
-        type: Object,
+        type: Array, // Change from Object to Array
         required: true,
     },
 });
 
-const showCreateModal = ref(false);
-const showEditModal = ref(false);
 const showDeleteModal = ref(false);
-const selectedCar = ref(null);
 const search = ref('');
 const filterAvailability = ref('');
 const carToDelete = ref(null);
 
 const form = useForm({});
 
-const editForm = useForm({
-    name: '',
-    model: '',
-    year: '',
-    color: '',
-    license_plate: '',
-    daily_rate: '',
-    description: '',
-    image: null,
+// Computed property to filter cars based on search and availability
+const filteredCars = computed(() => {
+    return props.cars.filter(car => {
+        const matchesSearch = car.name.toLowerCase().includes(search.value.toLowerCase()) ||
+            car.brand.toLowerCase().includes(search.value.toLowerCase()) ||
+            car.model.toLowerCase().includes(search.value.toLowerCase());
+
+        const matchesAvailability = filterAvailability.value
+            ? (filterAvailability.value === 'available' ? car.availability : !car.availability)
+            : true;
+
+        return matchesSearch && matchesAvailability;
+    });
 });
-
-const createCar = () => {
-    form.post(route('admin.cars.store'), {
-        onSuccess: () => {
-            form.reset();
-            showCreateModal.value = false;
-        },
-    });
-};
-
-const editCar = (car) => {
-    selectedCar.value = car;
-    editForm.name = car.name;
-    editForm.model = car.model;
-    editForm.year = car.year;
-    editForm.color = car.color;
-    editForm.license_plate = car.license_plate;
-    editForm.daily_rate = car.daily_rate;
-    editForm.description = car.description;
-    showEditModal.value = true;
-};
-
-const updateCar = () => {
-    editForm.post(route('admin.cars.update', selectedCar.value.id), {
-        onSuccess: () => {
-            editForm.reset();
-            showEditModal.value = false;
-            selectedCar.value = null;
-        },
-    });
-};
 
 const confirmCarDeletion = (car) => {
     carToDelete.value = car;

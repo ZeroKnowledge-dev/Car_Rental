@@ -39,12 +39,6 @@
                                 </div>
 
                                 <div>
-                                    <InputLabel for="phone" value="Phone Number" />
-                                    <TextInput id="phone" type="tel" v-model="form.phone" class="mt-1 block w-full" />
-                                    <InputError :message="form.errors.phone" class="mt-2" />
-                                </div>
-
-                                <div>
                                     <InputLabel for="password" value="New Password (optional)" />
                                     <TextInput id="password" type="password" v-model="form.password"
                                         class="mt-1 block w-full" autocomplete="new-password" />
@@ -93,7 +87,6 @@ const props = defineProps({
 const form = useForm({
     name: props.customer.name,
     email: props.customer.email,
-    phone: props.customer.phone || '',
     password: '',
     password_confirmation: '',
 });
