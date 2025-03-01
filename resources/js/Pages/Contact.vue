@@ -58,7 +58,7 @@ const submitForm = async () => {
 
 <template>
 
-    <Head title="Contact Us - Car Rental Service" />
+    <Head title="Contact Us" />
 
     <MainLayout>
         <!-- Hero Section -->

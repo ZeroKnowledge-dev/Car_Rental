@@ -58,7 +58,7 @@ const team = [
 
 <template>
 
-    <Head title="About Us - Car Rental Service" />
+    <Head title="About Us" />
 
     <MainLayout>
         <!-- Hero Section -->

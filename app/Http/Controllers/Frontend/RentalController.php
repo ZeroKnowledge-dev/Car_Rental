@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Car;
 use App\Models\Rental;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -65,19 +66,29 @@ class RentalController extends Controller {
 	/**
 	 * Cancel a rental.
 	 */
-	public function cancel(Rental $rental) {
-		if ($rental->user_id !== Auth::id()) {
-			abort(403);
+	public function cancel(Rental $rental, User $user) {
+		// Find User and check if it's an admin
+		$user    = User::find(Auth::id());
+		$isAdmin = $user->role === 'admin';
+
+		// Ensure the rental belongs to the authenticated user
+		if (!$isAdmin) {
+			if ($rental->user_id !== Auth::id()) {
+				abort(403);
+			}
 		}
 
+		// Check if the rental can be canceled
 		if ($rental->status !== 'ongoing') {
 			return back()->withErrors(['message' => 'This rental cannot be canceled.']);
 		}
 
+		// Prevent cancellation of rentals that have already started
 		if (strtotime($rental->start_date) <= strtotime('today')) {
 			return back()->withErrors(['message' => 'Cannot cancel a rental that has already started.']);
 		}
 
+		// Update the rental status to canceled
 		$rental->update(['status' => 'canceled']);
 
 		return redirect()->route('customerDashboard')

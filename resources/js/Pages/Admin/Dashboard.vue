@@ -17,7 +17,7 @@ const monthlyRevenue = computed(() => {
     const now = new Date();
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     return props.rentals
-        ?.filter(rental => new Date(rental.created_at) >= firstDayOfMonth && rental.status !== 'canceled')
+        ?.filter(rental => new Date(rental.created_at) >= firstDayOfMonth && rental.status === 'completed')
         .reduce((sum, rental) => sum + parseFloat(rental.total_cost), 0) || 0;
 });
 

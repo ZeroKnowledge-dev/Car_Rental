@@ -1,91 +1,101 @@
 <template>
+
+    <Head title="Add New Car" />
+
     <AdminLayout>
-        <template #header>
-            <h2 class="text-2xl font-bold text-[#155E64]">Dashboard</h2>
-        </template>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-[#013237] sm:text-4xl">
+                    Add New Car
+                </h2>
+                <p class="mt-2 text-sm text-gray-600">Add a new vehicle to your rental fleet</p>
+            </div>
 
-        <div class="py-12">
-            <div class="mx-auto max-w-4xl sm:px-6 lg:px-8">
-                <div class="shadow-lg rounded-lg p-8 bg-[#A0E4D0]">
-                    <h1 class="text-2xl font-semibold mb-6 text-[#155E64]">Create New Car</h1>
+            <div class="flex justify-center">
+                <div class="w-full max-w-3xl">
+                    <div class="bg-white shadow-lg sm:rounded-lg border border-gray-100">
+                        <div class="px-6 py-8">
+                            <form @submit.prevent="createCar" class="space-y-6">
+                                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                                    <div>
+                                        <InputLabel for="name" value="Car Name" class="text-[#013237]" />
+                                        <TextInput id="name" type="text" v-model="form.name"
+                                            class="mt-1 block w-full border-gray-300 focus:border-[#4CA771] focus:ring-[#4CA771]"
+                                            required />
+                                        <InputError :message="form.errors.name" class="mt-2" />
+                                    </div>
 
-                    <form @submit.prevent="submitForm" class="space-y-6">
-                        <!-- Car Name -->
-                        <div class="space-y-2">
-                            <label for="name" class="block text-[#155E64] font-medium">Car Name</label>
-                            <input type="text" v-model="form.name" id="name" required
-                                class="w-full p-3 border-2 border-[#75B39C] rounded-md focus:outline-none focus:ring-2 focus:ring-[#A0E4D0]" />
-                            <span v-if="form.errors.name" class="text-red-600 text-sm">{{ form.errors.name }}</span>
+                                    <div>
+                                        <InputLabel for="brand" value="Brand" class="text-[#013237]" />
+                                        <TextInput id="brand" type="text" v-model="form.brand"
+                                            class="mt-1 block w-full border-gray-300 focus:border-[#4CA771] focus:ring-[#4CA771]"
+                                            required />
+                                        <InputError :message="form.errors.brand" class="mt-2" />
+                                    </div>
+
+                                    <div>
+                                        <InputLabel for="model" value="Model" class="text-[#013237]" />
+                                        <TextInput id="model" type="text" v-model="form.model"
+                                            class="mt-1 block w-full border-gray-300 focus:border-[#4CA771] focus:ring-[#4CA771]"
+                                            required />
+                                        <InputError :message="form.errors.model" class="mt-2" />
+                                    </div>
+
+                                    <div>
+                                        <InputLabel for="year" value="Year" class="text-[#013237]" />
+                                        <TextInput id="year" type="number" v-model="form.year"
+                                            class="mt-1 block w-full border-gray-300 focus:border-[#4CA771] focus:ring-[#4CA771]"
+                                            required />
+                                        <InputError :message="form.errors.year" class="mt-2" />
+                                    </div>
+
+                                    <div>
+                                        <InputLabel for="daily_rent_price" value="Daily Rental Price ($)"
+                                            class="text-[#013237]" />
+                                        <TextInput id="daily_rent_price" type="number" step="0.01"
+                                            v-model="form.daily_rent_price"
+                                            class="mt-1 block w-full border-gray-300 focus:border-[#4CA771] focus:ring-[#4CA771]"
+                                            required />
+                                        <InputError :message="form.errors.daily_rent_price" class="mt-2" />
+                                    </div>
+
+                                    <div>
+                                        <InputLabel for="car_type" value="Car Type" class="text-[#013237]" />
+                                        <select id="car_type" v-model="form.car_type"
+                                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-[#4CA771] focus:ring focus:ring-[#4CA771] focus:ring-opacity-50"
+                                            required>
+                                            <option value="">Select Type</option>
+                                            <option value="sedan">Sedan</option>
+                                            <option value="suv">SUV</option>
+                                            <option value="luxury">Luxury</option>
+                                            <option value="sports">Sports</option>
+                                        </select>
+                                        <InputError :message="form.errors.car_type" class="mt-2" />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <InputLabel for="image" value="Car Image" class="text-[#013237]" />
+                                    <input type="file" id="image" @input="form.image = $event.target.files[0]"
+                                        class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#4CA771] file:text-white hover:file:bg-[#013237]"
+                                        accept="image/*" required />
+                                    <InputError :message="form.errors.image" class="mt-2" />
+                                </div>
+
+                                <div class="flex items-center justify-end gap-4 pt-4">
+                                    <Link :href="route('admin.cars.index')"
+                                        class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 hover:border-[#4CA771] focus:outline-none focus:ring-2 focus:ring-[#4CA771] focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                                    Cancel
+                                    </Link>
+                                    <PrimaryButton :class="{ 'opacity-25': form.processing }"
+                                        :disabled="form.processing" class="bg-[#4CA771] hover:bg-[#013237]">
+                                        Create Car
+                                    </PrimaryButton>
+                                </div>
+                            </form>
                         </div>
-
-                        <!-- Brand -->
-                        <div class="space-y-2">
-                            <label for="brand" class="block text-[#155E64] font-medium">Brand</label>
-                            <input type="text" v-model="form.brand" id="brand" required
-                                class="w-full p-3 border-2 border-[#75B39C] rounded-md focus:outline-none focus:ring-2 focus:ring-[#A0E4D0]" />
-                            <span v-if="form.errors.brand" class="text-red-600 text-sm">{{ form.errors.brand }}</span>
-                        </div>
-
-                        <!-- Model -->
-                        <div class="space-y-2">
-                            <label for="model" class="block text-[#155E64] font-medium">Model</label>
-                            <input type="text" v-model="form.model" id="model" required
-                                class="w-full p-3 border-2 border-[#75B39C] rounded-md focus:outline-none focus:ring-2 focus:ring-[#A0E4D0]" />
-                            <span v-if="form.errors.model" class="text-red-600 text-sm">{{ form.errors.model }}</span>
-                        </div>
-
-                        <!-- Car Type -->
-                        <div class="space-y-2">
-                            <label for="car_type" class="block text-[#155E64] font-medium">Car Type</label>
-                            <input type="text" v-model="form.car_type" id="car_type" required
-                                class="w-full p-3 border-2 border-[#75B39C] rounded-md focus:outline-none focus:ring-2 focus:ring-[#A0E4D0]" />
-                            <span v-if="form.errors.car_type" class="text-red-600 text-sm">{{ form.errors.car_type
-                            }}</span>
-                        </div>
-
-                        <!-- Year -->
-                        <div class="space-y-2">
-                            <label for="year" class="block text-[#155E64] font-medium">Year</label>
-                            <input type="number" v-model="form.year" id="year" required
-                                class="w-full p-3 border-2 border-[#75B39C] rounded-md focus:outline-none focus:ring-2 focus:ring-[#A0E4D0]" />
-                            <span v-if="form.errors.year" class="text-red-600 text-sm">{{ form.errors.year }}</span>
-                        </div>
-
-                        <!-- Daily Rent Price -->
-                        <div class="space-y-2">
-                            <label for="daily_rent_price" class="block text-[#155E64] font-medium">Daily Rent
-                                Price</label>
-                            <input type="number" v-model="form.daily_rent_price" id="daily_rent_price" required
-                                class="w-full p-3 border-2 border-[#75B39C] rounded-md focus:outline-none focus:ring-2 focus:ring-[#A0E4D0]" />
-                            <span v-if="form.errors.daily_rent_price" class="text-red-600 text-sm">{{
-                                form.errors.daily_rent_price }}</span>
-                        </div>
-
-                        <!-- Availability Checkbox -->
-                        <div class="flex items-center space-x-2">
-                            <input type="checkbox" v-model="form.availability" id="availability"
-                                class="border-[#75B39C] rounded-md focus:ring-[#A0E4D0]" />
-                            <label for="availability" class="text-[#155E64]">Available</label>
-                        </div>
-
-                        <!-- Car Image -->
-                        <div class="space-y-2">
-                            <label for="image" class="block text-[#155E64] font-medium">Car Image</label>
-                            <input type="file" @change="handleImageChange" id="image"
-                                class="block w-full text-[#155E64] p-3 border-2 border-[#75B39C] rounded-md" />
-                            <span v-if="form.errors.image" class="text-red-600 text-sm">{{ form.errors.image }}</span>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="flex justify-end mt-4">
-                            <button type="submit"
-                                class="px-6 py-2 text-white font-semibold bg-[#75B39C] rounded-md hover:bg-[#7bd1b7] focus:outline-none focus:ring-2 focus:ring-[#A0E4D0]"
-                                :disabled="form.processing">
-                                <span v-if="form.processing">Creating...</span>
-                                <span v-else>Create Car</span>
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -93,35 +103,31 @@
 </template>
 
 <script setup>
-import { useForm } from '@inertiajs/vue3';
+import { Head, useForm, Link } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputError from '@/Components/InputError.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 
 const form = useForm({
     name: '',
     brand: '',
     model: '',
     year: '',
-    car_type: '',
     daily_rent_price: '',
-    availability: false,
+    car_type: '',
     image: null,
+    availability: true,
 });
 
-const submitForm = () => {
+const createCar = () => {
     form.post(route('admin.cars.store'), {
+        preserveScroll: true,
         onSuccess: () => {
             form.reset();
-            alert('Car created successfully!');
-        },
-        onError: () => {
-            console.error(form.errors);
-            alert('There was an error creating the car');
         },
     });
-};
-
-const handleImageChange = (e) => {
-    form.image = e.target.files[0];
 };
 </script>
 

@@ -67,10 +67,12 @@ class CarController extends Controller {
 	 * Display the specified car.
 	 */
 	public function show(string $id) {
-		$car = Car::findOrFail($id); // Find car by ID
+		$car     = Car::findOrFail($id); // Find car by ID
+		$rentals = $car->rentals;
 
 		return Inertia::render('Admin/Cars/Show', [
-			'car' => $car,
+			'car'     => $car,
+			'rentals' => $rentals,
 		]);
 	}
 

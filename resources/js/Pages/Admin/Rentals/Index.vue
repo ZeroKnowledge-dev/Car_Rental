@@ -1,225 +1,204 @@
 <template>
 
-    <Head title="Manage Rentals" />
+    <Head title="Rentals" />
 
     <AdminLayout>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center">
-                <h1 class="text-2xl font-semibold text-gray-900">Rentals</h1>
+            <!-- Header -->
+            <div class="md:flex md:items-center md:justify-between mb-6">
+                <div class="min-w-0 flex-1">
+                    <h2 class="text-3xl font-bold text-[#013237] sm:text-4xl">
+                        Rentals
+                    </h2>
+                    <p class="mt-2 text-sm text-gray-600">Manage your car rental bookings</p>
+                </div>
+                <div class="mt-4 flex md:ml-4 md:mt-0">
+                    <Link :href="route('admin.rentals.create')"
+                        class="inline-flex items-center rounded-md bg-[#4CA771] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#013237] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4CA771]">
+                    <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    New Rental
+                    </Link>
+                </div>
             </div>
 
-            <!-- Rentals Table -->
-            <div class="mt-8 flex flex-col">
-                <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                    <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                            <table class="min-w-full divide-y divide-gray-300">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                                            Customer</th>
-                                        <th scope="col"
-                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Car</th>
-                                        <th scope="col"
-                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Dates</th>
-                                        <th scope="col"
-                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Total Cost
-                                        </th>
-                                        <th scope="col"
-                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status
-                                        </th>
-                                        <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                                            <span class="sr-only">Actions</span>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200 bg-white">
-                                    <tr v-for="rental in rentals.data" :key="rental.id">
-                                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                                            <div class="flex items-center">
-                                                <div class="h-10 w-10 flex-shrink-0">
-                                                    <div
-                                                        class="h-10 w-10 rounded-full bg-[#4CA771] flex items-center justify-center text-white font-semibold">
-                                                        {{ rental.customer_name.charAt(0) }}
-                                                    </div>
-                                                </div>
-                                                <div class="ml-4">
-                                                    <div class="font-medium text-gray-900">{{ rental.customer_name }}
-                                                    </div>
-                                                    <div class="text-gray-500">{{ rental.customer_email }}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            <div class="font-medium text-gray-900">{{ rental.car_name }}</div>
-                                            <div class="text-gray-500">{{ rental.car_license_plate }}</div>
-                                        </td>
-                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            <div>{{ formatDate(rental.start_date) }}</div>
-                                            <div>{{ formatDate(rental.end_date) }}</div>
-                                        </td>
-                                        <td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-[#4CA771]">
-                                            ${{ rental.total_cost }}
-                                        </td>
-                                        <td class="whitespace-nowrap px-3 py-4 text-sm">
-                                            <span
-                                                :class="[getStatusColor(rental.status), 'inline-flex rounded-full px-2 text-xs font-semibold leading-5']">
-                                                {{ rental.status }}
-                                            </span>
-                                        </td>
-                                        <td
-                                            class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                            <SecondaryButton @click="viewRentalDetails(rental)">View Details
-                                            </SecondaryButton>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+            <!-- Search and Filter Section -->
+            <div class="mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="flex-1">
+                        <input type="text" v-model="search" placeholder="Search rentals..."
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-[#4CA771] focus:ring focus:ring-[#4CA771] focus:ring-opacity-50" />
+                    </div>
+                    <div class="flex gap-4">
+                        <select v-model="filterStatus"
+                            class="rounded-md border-gray-300 shadow-sm focus:border-[#4CA771] focus:ring focus:ring-[#4CA771] focus:ring-opacity-50">
+                            <option value="">All Status</option>
+                            <option value="ongoing">Ongoing</option>
+                            <option value="completed">Completed</option>
+                            <option value="canceled">Canceled</option>
+                        </select>
                     </div>
                 </div>
             </div>
 
-            <!-- Rental Details Modal -->
-            <Modal :show="showDetailsModal" @close="showDetailsModal = false">
-                <div class="p-6">
-                    <h2 class="text-lg font-medium text-gray-900">Rental Details</h2>
-                    <div v-if="selectedRental" class="mt-6 space-y-6">
-                        <!-- Customer Information -->
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500 mb-4">Customer Information</h3>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="flex items-center">
-                                    <div
-                                        class="h-12 w-12 rounded-full bg-[#4CA771] flex items-center justify-center text-white font-semibold">
-                                        {{ selectedRental.customer_name.charAt(0) }}
-                                    </div>
-                                    <div class="ml-4">
-                                        <p class="text-sm font-medium text-gray-900">{{ selectedRental.customer_name }}
-                                        </p>
-                                        <p class="text-sm text-gray-500">{{ selectedRental.customer_email }}</p>
-                                        <p class="text-sm text-gray-500">{{ selectedRental.customer_phone }}</p>
-                                    </div>
-                                </div>
+            <!-- Rentals Grid -->
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div v-for="rental in filteredRentals" :key="rental.id"
+                    class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200">
+                    <div class="p-4">
+                        <!-- Customer Info -->
+                        <div class="flex items-center mb-4">
+                            <div
+                                class="h-10 w-10 rounded-full bg-[#4CA771] flex items-center justify-center text-white font-semibold">
+                                {{ rental.user.name.charAt(0) }}
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-lg font-semibold text-[#013237]">{{ rental.user.name }}</h3>
+                                <p class="text-sm text-gray-600">{{ rental.user.email }}</p>
                             </div>
                         </div>
 
-                        <!-- Car Information -->
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500 mb-4">Car Information</h3>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p class="text-sm font-medium text-gray-900">{{ selectedRental.car_name }}</p>
-                                        <p class="text-sm text-gray-500">License Plate: {{
-                                            selectedRental.car_license_plate }}</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="text-sm font-medium text-[#4CA771]">${{ selectedRental.total_cost }}
-                                        </p>
-                                        <p class="text-sm text-gray-500">Daily Rate: ${{ selectedRental.daily_rate }}
-                                        </p>
-                                    </div>
-                                </div>
+                        <!-- Car Info -->
+                        <div class="flex items-center mb-4">
+                            <div class="h-10 w-10 flex-shrink-0">
+                                <img :src="`/storage/${rental.car.image}`" :alt="rental.car.name"
+                                    class="h-10 w-10 rounded-lg object-cover" />
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-gray-900">{{ rental.car.name }}</p>
+                                <p class="text-sm text-gray-600">{{ rental.car.brand }} {{ rental.car.model }}</p>
                             </div>
                         </div>
 
                         <!-- Rental Details -->
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500 mb-4">Rental Period</h3>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p class="text-sm text-gray-500">Start Date</p>
-                                        <p class="text-sm font-medium text-gray-900">{{
-                                            formatDate(selectedRental.start_date) }}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm text-gray-500">End Date</p>
-                                        <p class="text-sm font-medium text-gray-900">{{
-                                            formatDate(selectedRental.end_date) }}</p>
-                                    </div>
+                        <div class="border-t border-gray-100 pt-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm text-gray-600">Duration</span>
+                                <span class="text-sm font-medium text-gray-900">
+                                    {{ formatDate(rental.start_date) }} - {{ formatDate(rental.end_date) }}
+                                </span>
+                            </div>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-sm text-gray-600">Total Cost</span>
+                                <span class="text-lg font-bold text-[#4CA771]">${{ rental.total_cost }}</span>
+                            </div>
+
+                            <!-- Status and Actions -->
+                            <div class="flex justify-between items-center">
+                                <span :class="[
+                                    getStatusColor(rental.status),
+                                    'inline-flex rounded-full px-2 py-1 text-xs font-semibold'
+                                ]">
+                                    {{ rental.status.charAt(0).toUpperCase() + rental.status.slice(1) }}
+                                </span>
+                                <div class="flex space-x-2">
+                                    <Link :href="route('admin.rentals.show', rental.id)"
+                                        class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 hover:border-[#4CA771] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4CA771]">
+                                    View Details
+                                    </Link>
+                                    <Link :href="route('admin.rentals.edit', rental.id)"
+                                        class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-[#4CA771] hover:bg-[#013237] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4CA771]">
+                                    Edit
+                                    </Link>
+                                    <button @click="confirmRentalDeletion(rental)"
+                                        class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                        Delete
+                                    </button>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Status Management -->
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-500 mb-4">Rental Status</h3>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <div class="flex items-center justify-between">
-                                    <span
-                                        :class="[getStatusColor(selectedRental.status), 'inline-flex rounded-full px-3 py-1 text-sm font-semibold']">
-                                        {{ selectedRental.status }}
-                                    </span>
-                                    <div class="space-x-2">
-                                        <PrimaryButton v-if="selectedRental.status !== 'completed'"
-                                            @click="updateRentalStatus(selectedRental, 'completed')">
-                                            Mark as Completed
-                                        </PrimaryButton>
-                                        <SecondaryButton v-if="selectedRental.status !== 'canceled'"
-                                            @click="updateRentalStatus(selectedRental, 'canceled')">
-                                            Cancel Rental
-                                        </SecondaryButton>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 flex justify-end">
-                            <SecondaryButton @click="showDetailsModal = false">Close</SecondaryButton>
                         </div>
                     </div>
                 </div>
-            </Modal>
+            </div>
         </div>
     </AdminLayout>
+
+    <!-- Delete Confirmation Modal -->
+    <Modal :show="showDeleteModal" @close="closeModal">
+        <div class="p-6">
+            <div class="flex items-center justify-center mb-4">
+                <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100">
+                    <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="text-center">
+                <h3 class="text-lg font-medium text-gray-900">Delete Rental</h3>
+                <p class="mt-2 text-sm text-gray-600">
+                    Are you sure you want to delete this rental? This action cannot be undone.
+                </p>
+            </div>
+            <div class="mt-6 flex justify-end space-x-3">
+                <SecondaryButton @click="closeModal">
+                    Cancel
+                </SecondaryButton>
+                <DangerButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
+                    @click="deleteRental">
+                    Delete Rental
+                </DangerButton>
+            </div>
+        </div>
+    </Modal>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
+import DangerButton from '@/Components/DangerButton.vue';
 
 const props = defineProps({
-    rentals: {
-        type: Object,
-        required: true,
-    },
+    rentals: Array
 });
 
-const showDetailsModal = ref(false);
-const selectedRental = ref(null);
+// Search and filter
+const search = ref('');
+const filterStatus = ref('');
 
-const viewRentalDetails = (rental) => {
-    selectedRental.value = rental;
-    showDetailsModal.value = true;
+// Delete functionality
+const showDeleteModal = ref(false);
+const rentalToDelete = ref(null);
+const form = useForm({});
+
+const confirmRentalDeletion = (rental) => {
+    rentalToDelete.value = rental;
+    showDeleteModal.value = true;
 };
 
+const closeModal = () => {
+    showDeleteModal.value = false;
+    rentalToDelete.value = null;
+};
+
+const deleteRental = () => {
+    if (rentalToDelete.value) {
+        form.delete(route('admin.rentals.destroy', rentalToDelete.value.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                closeModal();
+            },
+        });
+    }
+};
+
+// Format date helper
 const formatDate = (date) => {
     return new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
     });
 };
 
-const updateRentalStatus = (rental, status) => {
-    useForm().put(route('admin.rentals.update-status', rental.id), {
-        status: status
-    }, {
-        preserveScroll: true,
-        onSuccess: () => {
-            showDetailsModal.value = false;
-            selectedRental.value = null;
-        },
-    });
-};
-
+// Get status color helper
 const getStatusColor = (status) => {
     switch (status) {
         case 'completed':
@@ -232,4 +211,17 @@ const getStatusColor = (status) => {
             return 'bg-gray-100 text-gray-800';
     }
 };
+
+// Filtered rentals based on search and status
+const filteredRentals = computed(() => {
+    return props.rentals.filter(rental => {
+        const matchesSearch = search.value === '' ||
+            rental.user.name.toLowerCase().includes(search.value.toLowerCase()) ||
+            rental.car.name.toLowerCase().includes(search.value.toLowerCase());
+
+        const matchesStatus = filterStatus.value === '' || rental.status === filterStatus.value;
+
+        return matchesSearch && matchesStatus;
+    });
+});
 </script>

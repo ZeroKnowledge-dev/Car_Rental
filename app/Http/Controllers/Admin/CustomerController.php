@@ -15,7 +15,7 @@ class CustomerController extends Controller {
 	 * Display a listing of the resource.
 	 */
 	public function index() {
-		$customers = User::where('role', 'customer')->get();
+		$customers = User::where('role', 'customer')->has('rentals')->with('rentals')->get();
 
 		return Inertia::render('Admin/Customer/Index', [
 			'customers' => $customers,

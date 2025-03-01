@@ -13,6 +13,7 @@ class Rental extends Model {
 		'car_id',
 		'start_date',
 		'end_date',
+		'status',
 		'total_cost',
 	];
 

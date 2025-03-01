@@ -75,13 +75,13 @@ class RentalController extends Controller {
 	 */
 	public function edit(string $id) {
 		$rental = Rental::findOrFail($id); // Find rental by ID
-		$cars   = Car::where('availability', true)->get(); // Only available cars
-		$users  = User::where('role', 'customer')->get(); // All users
+		$car    = Car::where('availability', true)->get(); // Only available cars
+		$user   = User::where('role', 'customer')->get(); // All users
 
 		return Inertia::render('Admin/Rentals/Edit', [
 			'rental' => $rental,
-			'cars'   => $cars,
-			'users'  => $users,
+			'car'    => $car,
+			'user'   => $user,
 		]);
 	}
 

@@ -4,229 +4,109 @@
 
     <AdminLayout>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center">
-                <h1 class="text-2xl font-semibold text-gray-900">Cars</h1>
-                <PrimaryButton @click="showCreateModal = true">Add New Car</PrimaryButton>
+            <!-- Header -->
+            <div class="md:flex md:items-center md:justify-between mb-8">
+                <div class="min-w-0 flex-1">
+                    <h2 class="text-3xl font-bold text-[#013237] sm:text-4xl">
+                        Manage Cars
+                    </h2>
+                    <p class="mt-2 text-sm text-gray-600">Manage your fleet of rental vehicles</p>
+                </div>
+                <div class="mt-4 flex md:ml-4 md:mt-0">
+                    <Link :href="route('admin.cars.create')"
+                        class="inline-flex items-center px-3 py-1 bg-[#4CA771] text-white text-sm font-medium rounded-md hover:bg-[#013237] transition-colors duration-150">
+
+                    Add New Car
+                    </Link>
+                </div>
             </div>
 
-            <!-- Cars Table -->
-            <div class="mt-8 flex flex-col">
-                <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                    <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                            <table class="min-w-full divide-y divide-gray-300">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                                            Car</th>
-                                        
-                                        <th scope="col"
-                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Daily Rate
-                                        </th>
-                                        <th scope="col"
-                                            class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status
-                                        </th>
-                                        <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                                            <span class="sr-only">Actions</span>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200 bg-white">
-                                    <tr v-for="car in props.cars" :key="car.id">
-                                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                                            <div class="flex items-center">
-                                                <div class="h-10 w-10 flex-shrink-0">
-                                                    <img :src="`/storage/${car.image}`" :alt="car.name"
-                                                        class="h-10 w-10 rounded-full object-cover" />
-                                                </div>
-                                                <div class="ml-4">
-                                                    <div class="font-medium text-gray-900">{{ car.name }}</div>
-                                                    <div class="text-gray-500">{{ car.model }} {{ car.year }}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">${{ car.daily_rent_price
-                                            }}</td>
-                                        <td class="whitespace-nowrap px-3 py-4 text-sm">
-                                            <span :class="[
-                                                car.is_available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800',
-                                                'inline-flex rounded-full px-2 text-xs font-semibold leading-5'
-                                            ]">
-                                                {{ car.is_available ? 'Available' : 'Rented' }}
-                                            </span>
-                                        </td>
-                                        <td
-                                            class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                            <SecondaryButton class="mr-2" @click="editCar(car)">Edit</SecondaryButton>
-                                            <DangerButton @click="confirmCarDeletion(car)">Delete</DangerButton>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+            <!-- Search and Filter Section -->
+            <div class="mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="flex-1">
+                        <input type="text" v-model="search" placeholder="Search cars..."
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-[#4CA771] focus:ring focus:ring-[#4CA771] focus:ring-opacity-50" />
+                    </div>
+                    <div class="flex gap-4">
+                        <select v-model="filterAvailability"
+                            class="rounded-md border-gray-300 shadow-sm focus:border-[#4CA771] focus:ring focus:ring-[#4CA771] focus:ring-opacity-50">
+                            <option value="">All Status</option>
+                            <option value="available">Available</option>
+                            <option value="unavailable">Not Available</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cars Grid -->
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div v-for="car in props.cars" :key="car.id"
+                    class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200">
+                    <div class="aspect-w-16 aspect-h-9">
+                        <img :src="`/storage/${car.image}`" :alt="car.name" class="object-cover w-full h-48" />
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-lg font-semibold text-[#013237]">{{ car.name }}</h3>
+                                <p class="text-sm text-gray-600">{{ car.brand }} {{ car.model }} {{ car.year }}</p>
+                            </div>
+                            <span :class="[
+                                car.availability ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800',
+                                'inline-flex rounded-full px-2 py-1 text-xs font-semibold'
+                            ]">
+                                {{ car.availability ? 'Available' : 'Not Available' }}
+                            </span>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <span class="text-lg font-bold text-[#4CA771]">${{ car.daily_rent_price }}/day</span>
+                            <div class="flex space-x-2">
+                                <Link :href="route('admin.cars.show', car.id)"
+                                    class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 hover:border-[#4CA771] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4CA771]">
+                                View Details
+                                </Link>
+                                <Link :href="route('admin.cars.edit', car.id)"
+                                    class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-[#4CA771] hover:bg-[#013237] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4CA771]">
+                                Edit
+                                </Link>
+                                <button @click="confirmCarDeletion(car)"
+                                    class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Create Car Modal -->
-            <Modal :show="showCreateModal" @close="showCreateModal = false">
-                <div class="p-6">
-                    <h2 class="text-lg font-medium text-gray-900">Add New Car</h2>
-                    <form @submit.prevent="createCar" class="mt-6 space-y-6">
-                        <div>
-                            <InputLabel for="name" value="Name" />
-                            <TextInput id="name" type="text" v-model="form.name" class="mt-1 block w-full" required />
-                            <InputError :message="form.errors.name" class="mt-2" />
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <InputLabel for="model" value="Model" />
-                                <TextInput id="model" type="text" v-model="form.model" class="mt-1 block w-full"
-                                    required />
-                                <InputError :message="form.errors.model" class="mt-2" />
-                            </div>
-
-                            <div>
-                                <InputLabel for="year" value="Year" />
-                                <TextInput id="year" type="number" v-model="form.year" class="mt-1 block w-full"
-                                    required />
-                                <InputError :message="form.errors.year" class="mt-2" />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <InputLabel for="color" value="Color" />
-                                <TextInput id="color" type="text" v-model="form.color" class="mt-1 block w-full"
-                                    required />
-                                <InputError :message="form.errors.color" class="mt-2" />
-                            </div>
-
-                            <div>
-                                <InputLabel for="license_plate" value="License Plate" />
-                                <TextInput id="license_plate" type="text" v-model="form.license_plate"
-                                    class="mt-1 block w-full" required />
-                                <InputError :message="form.errors.license_plate" class="mt-2" />
-                            </div>
-                        </div>
-
-                        <div>
-                            <InputLabel for="daily_rate" value="Daily Rate" />
-                            <TextInput id="daily_rate" type="number" step="0.01" v-model="form.daily_rate"
-                                class="mt-1 block w-full" required />
-                            <InputError :message="form.errors.daily_rate" class="mt-2" />
-                        </div>
-
-                        <div>
-                            <InputLabel for="description" value="Description" />
-                            <textarea id="description" v-model="form.description" rows="3"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#4CA771] focus:ring-[#4CA771]"
-                                required></textarea>
-                            <InputError :message="form.errors.description" class="mt-2" />
-                        </div>
-
-                        <div>
-                            <InputLabel for="image" value="Image" />
-                            <input type="file" id="image" @input="form.image = $event.target.files[0]"
-                                class="mt-1 block w-full" accept="image/*" required />
-                            <InputError :message="form.errors.image" class="mt-2" />
-                        </div>
-
-                        <div class="flex justify-end mt-6 gap-4">
-                            <SecondaryButton @click="showCreateModal = false">Cancel</SecondaryButton>
-                            <PrimaryButton :disabled="form.processing">Create Car</PrimaryButton>
-                        </div>
-                    </form>
-                </div>
-            </Modal>
-
-            <!-- Edit Car Modal -->
-            <Modal :show="showEditModal" @close="showEditModal = false">
-                <div class="p-6">
-                    <h2 class="text-lg font-medium text-gray-900">Edit Car</h2>
-                    <form @submit.prevent="updateCar" class="mt-6 space-y-6">
-                        <div>
-                            <InputLabel for="edit_name" value="Name" />
-                            <TextInput id="edit_name" type="text" v-model="editForm.name" class="mt-1 block w-full"
-                                required />
-                            <InputError :message="editForm.errors.name" class="mt-2" />
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <InputLabel for="edit_model" value="Model" />
-                                <TextInput id="edit_model" type="text" v-model="editForm.model"
-                                    class="mt-1 block w-full" required />
-                                <InputError :message="editForm.errors.model" class="mt-2" />
-                            </div>
-
-                            <div>
-                                <InputLabel for="edit_year" value="Year" />
-                                <TextInput id="edit_year" type="number" v-model="editForm.year"
-                                    class="mt-1 block w-full" required />
-                                <InputError :message="editForm.errors.year" class="mt-2" />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <InputLabel for="edit_color" value="Color" />
-                                <TextInput id="edit_color" type="text" v-model="editForm.color"
-                                    class="mt-1 block w-full" required />
-                                <InputError :message="editForm.errors.color" class="mt-2" />
-                            </div>
-
-                            <div>
-                                <InputLabel for="edit_license_plate" value="License Plate" />
-                                <TextInput id="edit_license_plate" type="text" v-model="editForm.license_plate"
-                                    class="mt-1 block w-full" required />
-                                <InputError :message="editForm.errors.license_plate" class="mt-2" />
-                            </div>
-                        </div>
-
-                        <div>
-                            <InputLabel for="edit_daily_rate" value="Daily Rate" />
-                            <TextInput id="edit_daily_rate" type="number" step="0.01" v-model="editForm.daily_rate"
-                                class="mt-1 block w-full" required />
-                            <InputError :message="editForm.errors.daily_rate" class="mt-2" />
-                        </div>
-
-                        <div>
-                            <InputLabel for="edit_description" value="Description" />
-                            <textarea id="edit_description" v-model="editForm.description" rows="3"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#4CA771] focus:ring-[#4CA771]"
-                                required></textarea>
-                            <InputError :message="editForm.errors.description" class="mt-2" />
-                        </div>
-
-                        <div>
-                            <InputLabel for="edit_image" value="Image" />
-                            <input type="file" id="edit_image" @input="editForm.image = $event.target.files[0]"
-                                class="mt-1 block w-full" accept="image/*" />
-                            <InputError :message="editForm.errors.image" class="mt-2" />
-                        </div>
-
-                        <div class="flex justify-end mt-6 gap-4">
-                            <SecondaryButton @click="showEditModal = false">Cancel</SecondaryButton>
-                            <PrimaryButton :disabled="editForm.processing">Update Car</PrimaryButton>
-                        </div>
-                    </form>
-                </div>
-            </Modal>
-
             <!-- Delete Car Modal -->
-            <Modal :show="showDeleteModal" @close="showDeleteModal = false">
+            <Modal :show="showDeleteModal" @close="closeModal">
                 <div class="p-6">
-                    <h2 class="text-lg font-medium text-gray-900">Delete Car</h2>
-                    <p class="mt-1 text-sm text-gray-600">
-                        Are you sure you want to delete this car? This action cannot be undone.
-                    </p>
-
-                    <div class="mt-6 flex justify-end gap-4">
-                        <SecondaryButton @click="showDeleteModal = false">Cancel</SecondaryButton>
-                        <DangerButton :disabled="form.processing" @click="deleteCar">Delete Car</DangerButton>
+                    <div class="flex items-center justify-center mb-4">
+                        <div
+                            class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100">
+                            <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-lg font-medium text-gray-900">Delete Car</h3>
+                        <p class="mt-2 text-sm text-gray-600">
+                            Are you sure you want to delete this car? This action cannot be undone.
+                        </p>
+                    </div>
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <SecondaryButton @click="closeModal">
+                            Cancel
+                        </SecondaryButton>
+                        <DangerButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
+                            @click="deleteCar">
+                            Delete Car
+                        </DangerButton>
                     </div>
                 </div>
             </Modal>
@@ -239,9 +119,6 @@ import { ref } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import Modal from '@/Components/Modal.vue';
-import TextInput from '@/Components/TextInput.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
@@ -257,17 +134,11 @@ const showCreateModal = ref(false);
 const showEditModal = ref(false);
 const showDeleteModal = ref(false);
 const selectedCar = ref(null);
+const search = ref('');
+const filterAvailability = ref('');
+const carToDelete = ref(null);
 
-const form = useForm({
-    name: '',
-    model: '',
-    year: '',
-    color: '',
-    license_plate: '',
-    daily_rate: '',
-    description: '',
-    image: null,
-});
+const form = useForm({});
 
 const editForm = useForm({
     name: '',
@@ -312,16 +183,21 @@ const updateCar = () => {
 };
 
 const confirmCarDeletion = (car) => {
-    selectedCar.value = car;
+    carToDelete.value = car;
     showDeleteModal.value = true;
 };
 
+const closeModal = () => {
+    showDeleteModal.value = false;
+    carToDelete.value = null;
+};
+
 const deleteCar = () => {
-    if (selectedCar.value) {
-        useForm().delete(route('admin.cars.destroy', selectedCar.value.id), {
+    if (carToDelete.value) {
+        form.delete(route('admin.cars.destroy', carToDelete.value.id), {
+            preserveScroll: true,
             onSuccess: () => {
-                showDeleteModal.value = false;
-                selectedCar.value = null;
+                closeModal();
             },
         });
     }

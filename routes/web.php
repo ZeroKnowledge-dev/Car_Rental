@@ -15,25 +15,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', [PageController::class, 'welcome'])->name('welcome');
-Route::get('/about', [PageController::class, 'about'])->name('about');
-Route::get('/contact', [PageController::class, 'contact'])->name('contact');
-
-// Car Browsing Routes
-Route::get('/cars', [FrontendController::class, 'index'])->name('cars');
-Route::get('/cars/{car}', [FrontendController::class, 'show'])->name('cars.show');
-Route::post('/cars/{car}/check-availability', [FrontendController::class, 'checkAvailability'])
-	->name('cars.check-availability');
-
-Route::middleware(['auth'])->group(function () {
-	// Route::get('/dashboard/1', [PageController::class, 'dashboard'])->name('dashboard');
-
-	// Rental Routes
-	Route::get('/cars/{car}/rent', [FrontendRental::class, 'create'])->name('rentals.create');
-	Route::post('/cars/{car}/rent', [FrontendRental::class, 'store'])->name('rentals.store');
-	Route::patch('/rentals/{rental}/cancel', [FrontendRental::class, 'cancel'])->name('rentals.cancel');
-});
-
 Route::get('/admin/dashboard', function () {
 	$rentals   = Rental::all(); // Get all rentals
 	$cars      = Car::all(); // Get all cars
@@ -53,19 +34,33 @@ Route::get('/dashboard', function () {
 		->where('user_id', Auth::id())
 		->get();
 
-	return Inertia::render('Dashboard', [
+	return Inertia::render('Frontend/Dashboard', [
 		'rentals' => [
 			'data' => $rentals,
 		],
-		'flash'   => [
-			'success' => session('success'),
-			'error'   => session('error'),
-		],
 	]);
-})->middleware(CustomerMiddleware::class)->name('CustomerDashboard');
-Route::post('/rentals/{rental}/cancel', [FrontendRental::class, 'cancel'])
-	->middleware(CustomerMiddleware::class)
-	->name('rentals.cancel');
+})->middleware(CustomerMiddleware::class)->name('customerDashboard');
+
+// User Frontend
+Route::get('/', [PageController::class, 'welcome'])->name('welcome');
+Route::get('/about', [PageController::class, 'about'])->name('about');
+Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+
+// Car Browsing Routes
+Route::get('/cars', [FrontendController::class, 'index'])->name('cars');
+Route::get('/cars/{car}', [FrontendController::class, 'show'])->name('cars.show');
+
+Route::middleware(['auth'])->group(function () {
+	// Check cars availability
+	Route::post('/cars/{car}/check-availability', [FrontendController::class, 'checkAvailability'])
+		->name('cars.check-availability');
+	// Rental Routes
+	Route::get('/cars/{car}/rent', [FrontendRental::class, 'create'])->name('rentals.create');
+	Route::post('/cars/{car}/rent', [FrontendRental::class, 'store'])->name('rentals.store');
+	Route::patch('/rentals/{rental}/cancel', [FrontendRental::class, 'cancel'])->name('rentals.cancel');
+	Route::post('/rentals/{rental}/cancel', [FrontendRental::class, 'cancel'])
+		->name('rentals.cancel');
+});
 
 Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->group(function () {
 	Route::resource('customers', CustomerController::class);

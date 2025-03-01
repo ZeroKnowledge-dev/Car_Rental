@@ -34,8 +34,6 @@ const checkAvailability = async () => {
             end_date: endDate.value      // '2025-02-28' format
         });
 
-        console.log(response.data);
-
         // Use response.data to access the response
         const data = response.data;
         isAvailable.value = data.available;
@@ -79,7 +77,7 @@ const today = new Date().toISOString().split('T')[0];
 
 <template>
 
-    <Head :title="`${car.brand} ${car.model}`" />
+    <Head :title="`${car.name}`" />
 
     <MainLayout>
         <div class="py-12 bg-[#EAF9E7]">

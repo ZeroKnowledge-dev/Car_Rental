@@ -21,7 +21,7 @@ class AdminMiddleware {
 
 		//Check if user is admin
 		if (Auth::user()->role !== 'admin') {
-			return redirect()->route('CustomerDashboard')->with('error', 'You do not have permission to access this page.');
+			return redirect()->route('customerDashboard')->with('error', 'You do not have permission to access this page.');
 		}
 
 		return $next($request);

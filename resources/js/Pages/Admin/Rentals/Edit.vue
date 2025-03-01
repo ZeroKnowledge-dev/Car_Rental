@@ -1,53 +1,111 @@
 <template>
+
+    <Head :title="'Edit Rental - ' + rental.id" />
+
     <AdminLayout>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-[#013237] sm:text-4xl">
+                    Edit Rental
+                </h2>
+                <p class="mt-2 text-sm text-gray-600">Update rental information</p>
+            </div>
 
-        <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                Dashboard
-            </h2>
-        </template>
+            <div class="flex justify-center">
+                <div class="w-full max-w-3xl">
+                    <div class="bg-white shadow-lg sm:rounded-lg border border-gray-100">
+                        <div class="px-6 py-8">
+                            <form @submit.prevent="updateRental" class="space-y-6">
+                                <!-- Customer Information (Read-only) -->
+                                <div>
+                                    <InputLabel value="Customer" class="text-[#013237]" />
+                                    <div class="mt-1 flex items-center">
+                                        <div
+                                            class="h-10 w-10 rounded-full bg-[#4CA771] flex items-center justify-center text-white font-semibold">
+                                            {{ user.name }}
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-gray-900">{{ user.name }}</p>
+                                            <p class="text-sm text-gray-500">{{ user.email }}</p>
+                                        </div>
+                                    </div>
+                                </div>
 
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <div>
-                            <h1>Edit Rental</h1>
-                            <form @submit.prevent="submitForm">
+                                <!-- Car Information (Read-only) -->
                                 <div>
-                                    <label for="user_id">User:</label>
-                                    <select v-model="form.user_id" required>
-                                        <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}
-                                        </option>
+                                    <InputLabel value="Car" class="text-[#013237]" />
+                                    <div class="mt-1 flex items-center">
+                                        <div class="h-10 w-10 flex-shrink-0">
+                                            <img :src="`/storage/${car.image}`" :alt="car.name"
+                                                class="h-10 w-10 rounded-lg object-cover" />
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-gray-900">{{ car.name }}</p>
+                                            <p class="text-sm text-gray-500">{{ car.brand }} {{ car.model }}</p>
+                                        </div>
+                                        <div class="ml-auto">
+                                            <p class="text-sm font-medium text-[#4CA771]">${{ car.daily_rent_price
+                                                }}/day</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Rental Dates -->
+                                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                                    <div>
+                                        <InputLabel for="start_date" value="Start Date" class="text-[#013237]" />
+                                        <TextInput id="start_date" type="date" v-model="form.start_date"
+                                            class="mt-1 block w-full border-gray-300 focus:border-[#4CA771] focus:ring-[#4CA771]"
+                                            :min="minStartDate" required />
+                                        <InputError :message="form.errors.start_date" class="mt-2" />
+                                    </div>
+
+                                    <div>
+                                        <InputLabel for="end_date" value="End Date" class="text-[#013237]" />
+                                        <TextInput id="end_date" type="date" v-model="form.end_date"
+                                            class="mt-1 block w-full border-gray-300 focus:border-[#4CA771] focus:ring-[#4CA771]"
+                                            :min="form.start_date" required />
+                                        <InputError :message="form.errors.end_date" class="mt-2" />
+                                    </div>
+                                </div>
+
+                                <!-- Rental Status -->
+                                <div>
+                                    <InputLabel for="status" value="Status" class="text-[#013237]" />
+                                    <select id="status" v-model="form.status"
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-[#4CA771] focus:ring focus:ring-[#4CA771] focus:ring-opacity-50">
+                                        <option value="ongoing">Ongoing</option>
+                                        <option value="completed">Completed</option>
+                                        <option value="canceled">Canceled</option>
                                     </select>
+                                    <InputError :message="form.errors.status" class="mt-2" />
                                 </div>
-                                <div>
-                                    <label for="car_id">Car:</label>
-                                    <select @change="calculateTotalPrice(form.car_id)" v-model="form.car_id" required>
-                                        <option v-for="car in cars" :key="car.id" :value="car.id">{{ car.name }}
-                                        </option>
-                                    </select>
+
+                                <!-- Total Cost Preview -->
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-500">Total Cost</p>
+                                            <p class="text-lg font-bold text-[#4CA771]">${{ totalCost }}</p>
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            {{ rentalDays }} days × ${{ car.daily_rent_price }}/day
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label for="start_date">Start Date:</label>
-                                    <input @change="calculateTotalPrice(form.car_id)" type="date"
-                                        v-model="form.start_date" required />
+
+                                <div class="flex items-center justify-end gap-4 pt-4">
+                                    <Link :href="route('admin.rentals.show', rental.id)"
+                                        class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 hover:border-[#4CA771] focus:outline-none focus:ring-2 focus:ring-[#4CA771] focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                                    Cancel
+                                    </Link>
+                                    <PrimaryButton :class="{ 'opacity-25': form.processing }"
+                                        :disabled="form.processing" class="bg-[#4CA771] hover:bg-[#013237]">
+                                        Update Rental
+                                    </PrimaryButton>
                                 </div>
-                                <div>
-                                    <label for="end_date">End Date:</label>
-                                    <input @change="calculateTotalPrice(form.car_id)" type="date"
-                                        v-model="form.end_date" required />
-                                </div>
-                                <div>
-                                    <p><strong>Total Cost: </strong> {{ form.total_cost }}</p>
-                                </div>
-                                <button type="submit">Update Rental</button>
                             </form>
-
-                            <div>
-                                <Link :href="route('admin.rentals.index')" class="btn btn-secondary">Back to Rentals
-                                List</Link>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -57,62 +115,61 @@
 </template>
 
 <script setup>
-import { useForm, Link } from '@inertiajs/vue3';
-import { defineProps } from 'vue';
+import { computed, watch } from 'vue';
+import { Head, useForm, Link } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputError from '@/Components/InputError.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 
 const props = defineProps({
     rental: Object,
-    cars: Object,
-    users: Object
-})
-
-// Initialize the form with the rental's current data
-const form = useForm({
-    user_id: props.rental.user_id,
-    car_id: props.rental.car_id,
-    start_date: props.rental.start_date,
-    end_date: props.rental.end_date,
-    total_cost: props.rental.total_cost,
+    user: Object,
+    car: Object
 });
 
-function dateValidate() {
-    form.start_date = new Date(props.rental.start_date).toISOString().split('T')[0];
-    form.end_date = new Date(props.rental.end_date).toISOString().split('T')[0];
-}
+const form = useForm({
+    start_date: props.rental.start_date,
+    end_date: props.rental.end_date,
+    status: props.rental.status,
+    total_cost: props.rental.total_cost,
+    user_id: props.user.id,
+    car_id: props.car.id,
+    _method: 'PUT',
+});
 
-function calculateTotalPrice(id) {
-    // Ensure both dates are valid
-    if (!form.start_date || !form.end_date || !form.car_id) return;
+// Use the rental's original start date as minimum if it's in the past
+const minStartDate = computed(() => {
+    const originalStart = new Date(props.rental.start_date);
+    const today = new Date();
+    return originalStart < today ? props.rental.start_date : today.toISOString().split('T')[0];
+});
 
-    // Define the two dates
-    const date1 = new Date(form.start_date);
-    const date2 = new Date(form.end_date);
+const rentalDays = computed(() => {
+    if (!form.start_date || !form.end_date) return 0;
+    const start = new Date(form.start_date);
+    const end = new Date(form.end_date);
+    const diffTime = Math.abs(end - start);
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Add 1 to include both start and end dates
+});
 
-    // Calculate the difference in milliseconds
-    const differenceInTime = date2.getTime() - date1.getTime();
+const totalCost = computed(() => {
+    const cost = props.car.daily_rent_price * rentalDays.value;
+    form.total_cost = cost; // Update the form's total_cost
+    return cost;
+});
 
-    // Convert the difference from milliseconds to days
-    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
-
-    // Ensure the difference is non-negative
-    if (differenceInDays >= 0) {
-        //Find car
-        const car = props.cars.find(car => car.id === id);
-        // Calculate the total price
-        form.total_cost = differenceInDays * car.daily_rent_price; // Replace 5 with the actual daily rate if needed
-    } else {
-        form.total_cost = 0; // Reset if end date is before start date
+// Watch for date changes to validate end_date
+watch([() => form.start_date, () => form.end_date], ([newStart, newEnd]) => {
+    if (newStart && newEnd && new Date(newEnd) < new Date(newStart)) {
+        form.end_date = newStart;
     }
-}
+});
 
-const submitForm = () => {
-    form.put(route('admin.rentals.update', props.rental.id), {
-        onSuccess: () => {
-            alert('Rental updated successfully!');
-        },
+const updateRental = () => {
+    form.post(route('admin.rentals.update', props.rental.id), {
+        preserveScroll: true,
     });
 };
-
-dateValidate();
 </script>
