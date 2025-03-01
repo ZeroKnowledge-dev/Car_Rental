@@ -103,7 +103,7 @@ const submitForm = () => {
                                         </div>
                                         <div class="border-t border-gray-300 my-2 pt-2 flex justify-between">
                                             <span class="text-gray-700 font-semibold">Total Cost:</span>
-                                            <span class="text-[#4CA771] font-bold">${{ totalCost }}</span>
+                                            <span class="text-[#4CA771] font-bold">${{ totalCost.toFixed(2) }}</span>
                                         </div>
                                     </div>
                                 </div>

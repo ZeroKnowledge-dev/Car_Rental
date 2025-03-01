@@ -174,7 +174,8 @@ const today = new Date().toISOString().split('T')[0];
                                         </p>
                                         <p class="text-gray-700">
                                             <span class="font-semibold">Estimated Cost:</span>
-                                            <span class="text-[#4CA771] font-semibold">${{ estimatedCost() }}</span>
+                                            <span class="text-[#4CA771] font-semibold">${{ estimatedCost().toFixed(2)
+                                                }}</span>
                                         </p>
                                     </div>
 
