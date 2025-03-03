@@ -59,8 +59,7 @@ class RentalController extends Controller {
 			'total_cost' => $totalCost,
 		]);
 
-		return redirect()->route('dashboard')
-			->with('success', 'Car rental booked successfully!');
+		return response()->json(['success' => 'Rental created successfully.']);
 	}
 
 	/**
@@ -89,9 +88,34 @@ class RentalController extends Controller {
 		}
 
 		// Update the rental status to canceled
-		$rental->update(['status' => 'canceled']);
+		// $rental->update(['status' => 'canceled']);
 
-		return redirect()->route('customerDashboard')
-			->with('success', 'Rental canceled successfully.');
+		return;
+	}
+
+	/**
+	 * Complete a rental.
+	 */
+	public function complete(Rental $rental, User $user) {
+		// Find User and check if it's an admin
+		$user    = User::find(Auth::id());
+		$isAdmin = $user->role === 'admin';
+
+		// Ensure the rental belongs to the authenticated user
+		if (!$isAdmin) {
+			if ($rental->user_id !== Auth::id()) {
+				abort(403);
+			}
+		}
+
+		// Check if the rental can be completed
+		if ($rental->status !== 'ongoing') {
+			return back()->withErrors(['message' => 'This rental cannot be completed.']);
+		}
+
+		// Update the rental status to completed
+		$rental->update(['status' => 'completed']);
+
+		return redirect()->route('admin.rentals.index')->with('success', 'Rental completed successfully.');
 	}
 }

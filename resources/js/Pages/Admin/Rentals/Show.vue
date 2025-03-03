@@ -85,7 +85,7 @@
                                             {{
                                                 rental.car.year }}</p>
                                         <p class="text-sm font-medium text-[#4CA771]">${{ rental.car.daily_rent_price
-                                        }}/day
+                                            }}/day
                                         </p>
                                     </div>
                                 </div>
@@ -130,7 +130,7 @@
                                 <SecondaryButton @click="cancelRental(rental.id)" :disabled="processing">
                                     Cancel Rental
                                 </SecondaryButton>
-                                <PrimaryButton @click="completeRental" :disabled="processing"
+                                <PrimaryButton @click="completeRental(rental.id)" :disabled="processing"
                                     class="bg-[#4CA771] hover:bg-[#013237]">
                                     Mark as Completed
                                 </PrimaryButton>
@@ -185,23 +185,11 @@ const getStatusColor = (status) => {
     }
 };
 
-const completeRental = () => {
-    processing.value = true;
-    form.put(route('admin.rentals.update', props.rental.id), {
-        status: 'completed'
-    }, {
-        preserveScroll: true,
-        onFinish: () => {
-            processing.value = false;
-        }
-    });
-};
-
-const cancelForm = useForm({});
+const rentalForm = useForm({});
 
 const cancelRental = (rentalId) => {
     if (confirm('Are you sure you want to cancel this rental?')) {
-        cancelForm.post(route('rentals.cancel', { rental: rentalId }), {
+        rentalForm.post(route('rentals.cancel', { rental: rentalId }), {
             preserveScroll: true,
             onSuccess: () => {
                 // You could also rely on flash messages instead of alert
@@ -213,6 +201,26 @@ const cancelRental = (rentalId) => {
                     alert(errors.message);
                 } else {
                     alert('An error occurred while canceling the rental.');
+                }
+            }
+        });
+    }
+};
+
+const completeRental = (rentalId) => {
+    if (confirm('Are you sure you want to complete this rental?')) {
+        rentalForm.post(route('admin.rentals.complete', { rental: rentalId }), {
+            preserveScroll: true,
+            onSuccess: () => {
+                // You could also rely on flash messages instead of alert
+                alert('Rental completed successfully!');
+            },
+            onError: (errors) => {
+                // Display errors if completion fails
+                if (errors.message) {
+                    alert(errors.message);
+                } else {
+                    alert('An error occurred while completing the rental.');
                 }
             }
         });

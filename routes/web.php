@@ -66,6 +66,8 @@ Route::prefix('admin')->name('admin.')->middleware(AdminMiddleware::class)->grou
 	Route::resource('customers', CustomerController::class);
 	Route::resource('cars', CarController::class);
 	Route::resource('rentals', RentalController::class);
+	Route::post('/rentals/{rental}/completed', [FrontendRental::class, 'complete'])
+		->name('rentals.complete');
 });
 
 require __DIR__ . '/auth.php';
