@@ -66,10 +66,15 @@
                                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-[#4CA771] focus:ring focus:ring-[#4CA771] focus:ring-opacity-50"
                                             required>
                                             <option value="">Select Type</option>
-                                            <option value="sedan">Sedan</option>
-                                            <option value="suv">SUV</option>
-                                            <option value="luxury">Luxury</option>
-                                            <option value="sports">Sports</option>
+                                            <option value="Sedan">Sedan</option>
+                                            <option value="Coupe">Coupe</option>
+                                            <option value="SUV">SUV</option>
+                                            <option value="Coupe">Coupe</option>
+                                            <option value="Convertible">Convertible</option>
+                                            <option value="Truck">Truck</option>
+                                            <option value="Minivan">Minivan</option>
+                                            <option value="Electric">Electric</option>
+                                            <option value="Electric Truck">Electric Truck</option>
                                         </select>
                                         <InputError :message="form.errors.car_type" class="mt-2" />
                                     </div>
