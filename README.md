@@ -9,4 +9,95 @@
 
 ## Demo Video
 
-[Watch Demo](https://youtu.be/UVJYgPuuJfI)
+Demo Video : [Watch Demo](https://youtu.be/UVJYgPuuJfI)
+
+# 🚀 CarRental - Rent a Car
+
+CarRental is a **full-stack Rental app** designed to Rent car easily. It includes **user authentication, Cars Management, Rent management, and separate admin and user dashboard**.
+
+## 🔥 Features
+
+✅ User Authentication
+✅ Rent or Cancel cars
+✅ Dashboard with all rental data
+✅ Separate Admin dashboard to manage car and rental
+
+## 🛠️ Tech Stack
+
+-   **Frontend:** Vue 3, Tailwind CSS, HTML, CSS
+-   **Backend:** PHP (Laravel)
+-   **Database:** MySQL
+
+---
+
+## 🚀 Installation Guide
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/ZeroKnowledge-dev/Car_Rental
+cd Car_Rental
+```
+
+### 2️⃣ Install Backend Dependencies
+
+```bash
+composer install
+```
+
+### 3️⃣ Install Frontend Dependencies
+
+```bash
+npm install
+```
+
+### 4️⃣ Configure Environment
+
+Copy the `.env.example` file and rename it to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Then, update your database credentials in the `.env` file.
+
+### 5️⃣ Generate App Key
+
+```bash
+php artisan key:generate
+```
+
+### 6️⃣ Run Migrations & Seed Database
+
+```bash
+php artisan migrate
+```
+
+### 7️⃣ Create a Storage Link
+
+```bash
+php artisan storage:link
+```
+
+### 8️⃣ Start the Development Server
+
+```bash
+composer run dev
+```
+
+---
+
+## 🎯 Usage
+
+-   Access the app at `http://localhost:8000`
+-   Register/Login to Rent a Car.
+
+---
+
+## 📌 Contributing
+
+Contributions are welcome! Feel free to fork the repo and submit a pull request.
+
+## 📜 License
+
+This project is **open-source** and available under the [MIT License](LICENSE).
